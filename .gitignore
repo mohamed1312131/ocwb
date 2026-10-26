@@ -43,3 +43,8 @@ mvnw.cmd
 ### Database ###
 *.db
 *.sqlite
+
+### Local environment ###
+.env
+.env.*
+!.env.example

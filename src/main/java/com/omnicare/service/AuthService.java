@@ -13,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +29,14 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     
     public AuthResponse register(RegisterRequest request) {
+        User.Role requestedRole = User.Role.valueOf(request.getRole().toUpperCase());
+        if (requestedRole == User.Role.ADMIN) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Admin accounts cannot be created through public registration"
+            );
+        }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -37,7 +47,7 @@ public class AuthService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setRole(User.Role.valueOf(request.getRole().toUpperCase()));
+        user.setRole(requestedRole);
         user.setEnabled(true);
         user.setCreatedAt(LocalDateTime.now());
         

@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +17,6 @@ public class AuthRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
+    @ToString.Exclude
     private String password;
 }
